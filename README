@@ -1,0 +1,27 @@
+Stubble
+========
+
+Work towards a Ruby stubber that retains the original functionality under the hood.
+
+Example
+=======
+
+Add some stubble
+  Stubble.add_stubble!(Time)
+
+Tell it just to track a method
+  Time.track!(:now)
+
+We can then later assert against calls
+
+Or we can stub it
+
+  Time.stub!(:now, [Time.mktime(2010,12,17,10,40)])
+  
+After Time.now has been called once, the functionality will return to normal
+
+Or we can call
+
+  Time.unstub!(:now)
+
+Copyright (c) 2010 [Matthew Rudy Jacobs], released under the MIT license
