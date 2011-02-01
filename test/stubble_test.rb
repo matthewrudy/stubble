@@ -16,6 +16,10 @@ class StubbleTest < Test::Unit::TestCase
       @hits +=1
     end
     
+    def with_punctuation!
+      "punctuated"
+    end
+    
     def some_method_with_arguments(times, shout="boom")
       shout * times
     end
@@ -106,6 +110,20 @@ class StubbleTest < Test::Unit::TestCase
     
     assert_equal 3, this.some_method
     assert_equal 1, this._stubble[:some_method].length # no new
+  end
+  
+  test "we can stub! punctuated methods" do
+    this = StubThis.new
+    assert_equal "punctuated", this.with_punctuation!
+    
+    Stubble.add_stubble!(this)
+    this.stub!(:with_punctuation!, [:a, :b, :c])
+    
+    assert_equal :a, this.with_punctuation!
+    assert_equal :b, this.with_punctuation!
+    assert_equal :c, this.with_punctuation!
+    
+    assert_equal "punctuated", this.with_punctuation!
   end
   
   test "stub! - defines the next values to be returned" do

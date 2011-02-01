@@ -87,16 +87,18 @@ module Stubble
     
     def track!(method_name)
       self._stubble.track!(method_name)
-      unless methods.include?("#{method_name}_with_stubble")
+
+      unstubbled_method_name = "__unstubbled__#{method_name}"
+      unless methods.include?(unstubbled_method_name)
         class_eval <<-RUBY
-          def #{method_name}_with_stubble(*args, &block)
+          alias #{unstubbled_method_name} #{method_name} 
+          def #{method_name}(*args, &block)
             if stubbed_return = self._stubble.called!(#{method_name.inspect}, args, block)
               stubbed_return.perform
             else
-              #{method_name}_without_stubble(*args, &block)
+              #{unstubbled_method_name}(*args, &block)
             end
           end
-          alias_method_chain #{method_name.inspect}, :stubble
         RUBY
       end
     end
