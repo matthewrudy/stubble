@@ -122,6 +122,37 @@ class StubbleTest < Test::Unit::TestCase
     assert_equal 2, this.some_method
   end
   
+  test "stub! - can be done progressively" do
+    this = StubThis.new
+    assert_equal 1, this.some_method
+    
+    Stubble.add_stubble!(this)
+    this.stub!(:some_method, [:a])
+    this.stub!(:some_method, [:b, :c])
+    
+    assert_equal :a, this.some_method
+    assert_equal :b, this.some_method
+    assert_equal :c, this.some_method
+    
+    assert_equal 2, this.some_method
+  end
+  
+  class SomeMagicError < RuntimeError ; end
+  
+  test "raise!" do
+     this = StubThis.new
+     assert_equal 1, this.some_method
+
+     Stubble.add_stubble!(this)
+     this.raise!(:some_method, SomeMagicError)
+     
+     assert_raise(SomeMagicError) do
+       this.some_method
+     end
+
+     assert_equal 2, this.some_method
+   end
+  
   test "unstub! - cancels a stub" do
     this = StubThis.new
     assert_equal 1, this.some_method

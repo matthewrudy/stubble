@@ -32,8 +32,14 @@ module Stubble
       @tracking.delete(method_name)
     end
     
-    def stub!(method_name, values)
-      @stubs[method_name] = values
+    def raise!(method_name, exception)
+      @stubs[method_name] ||= []
+      @stubs[method_name] << RaiseStub.new(exception)
+    end
+    
+    def stub!(method_name, value)
+      @stubs[method_name] ||= []
+      @stubs[method_name] << ReturnStub.new(value)
     end
     
     def unstub!(method_name)
@@ -57,6 +63,26 @@ module Stubble
   end
   module_function :add_stubble!
   
+  class ReturnStub
+    def initialize(value)
+      @value = value
+    end
+    
+    def perform
+      return @value
+    end
+  end
+  
+  class RaiseStub
+    def initialize(exception)
+      @exception = exception
+    end
+    
+    def perform
+      raise @exception
+    end
+  end
+  
   module StubMethods
     
     def track!(method_name)
@@ -65,7 +91,7 @@ module Stubble
         class_eval <<-RUBY
           def #{method_name}_with_stubble(*args, &block)
             if stubbed_return = self._stubble.called!(#{method_name.inspect}, args, block)
-              stubbed_return
+              stubbed_return.perform
             else
               #{method_name}_without_stubble(*args, &block)
             end
@@ -81,7 +107,15 @@ module Stubble
     
     def stub!(method_name, values)
       track!(method_name)
-      self._stubble.stub!(method_name, values)
+      values.each do |value|
+        self._stubble.stub!(method_name, value)
+      end
+    end
+    
+    def raise!(method_name, exception)
+      track!(method_name)
+      
+      self._stubble.raise!(method_name, exception)
     end
     
     def unstub!(method_name)
