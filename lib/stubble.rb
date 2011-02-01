@@ -90,7 +90,7 @@ module Stubble
 
       unstubbled_method_name = "__unstubbled__#{method_name}"
       unless methods.include?(unstubbled_method_name)
-        class_eval <<-RUBY
+        instance_eval <<-RUBY
           alias #{unstubbled_method_name} #{method_name} 
           def #{method_name}(*args, &block)
             if stubbed_return = self._stubble.called!(#{method_name.inspect}, args, block)

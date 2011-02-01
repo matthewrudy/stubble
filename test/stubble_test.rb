@@ -28,6 +28,10 @@ class StubbleTest < Test::Unit::TestCase
       yield @hits+=1
     end
     
+    def self.some_classy
+      "classy"
+    end
+    
   end
   
   test "stubble is added on an individual basis" do
@@ -63,6 +67,13 @@ class StubbleTest < Test::Unit::TestCase
     assert_equal "purple",  this.some_method_with_arguments(1, "purple")
     
     assert_equal [[[2],false], [[1,"purple"],false]], this._stubble[:some_method_with_arguments]
+  end
+  
+  test "track! - with a class" do
+    Stubble.add_stubble!(StubThis)
+    
+    StubThis.track!(:some_classy)
+    StubThis.some_classy
   end
   
   test "track! - tracks blocks" do
@@ -138,6 +149,15 @@ class StubbleTest < Test::Unit::TestCase
     assert_equal :c, this.some_method
     
     assert_equal 2, this.some_method
+  end
+  
+  test "stub! - with a class" do
+    Stubble.add_stubble!(StubThis)
+    
+    assert_equal "classy", StubThis.some_classy
+    StubThis.stub!(:some_classy, ["purple"])
+    assert_equal "purple", StubThis.some_classy
+    assert_equal "classy", StubThis.some_classy
   end
   
   test "stub! - can be done progressively" do
