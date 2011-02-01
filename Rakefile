@@ -2,6 +2,9 @@ require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
 
+require "rubygems"
+require "rake/gempackagetask"
+
 desc 'Default: run unit tests.'
 task :default => :test
 
@@ -22,20 +25,6 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
-require "rubygems"
-require "rake/gempackagetask"
-require "rake/rdoctask"
-
-require "rake/testtask"
-Rake::TestTask.new do |t|
-  t.libs << "test"
-  t.test_files = FileList["test/**/*_test.rb"]
-  t.verbose = true
-end
-
-
-task :default => ["test"]
-
 # This builds the actual gem. For details of what all these options
 # mean, and other ones you can add, check the documentation here:
 #
@@ -45,7 +34,7 @@ spec = Gem::Specification.new do |s|
 
   # Change these as appropriate
   s.name              = "stubble"
-  s.version           = "0.1.0"
+  s.version           = "0.1.1"
   s.summary           = "(experimental) simple stubbing"
   s.author            = "Matthew Rudy Jacobs"
   s.email             = "MatthewRudyJacobs@gmail.com"
