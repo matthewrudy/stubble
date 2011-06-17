@@ -34,7 +34,7 @@ spec = Gem::Specification.new do |s|
 
   # Change these as appropriate
   s.name              = "stubble"
-  s.version           = "0.1.2"
+  s.version           = "0.1.3"
   s.summary           = "(experimental) simple stubbing"
   s.author            = "Matthew Rudy Jacobs"
   s.email             = "MatthewRudyJacobs@gmail.com"
